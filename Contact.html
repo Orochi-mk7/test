@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Simba.css">
+	<link rel="stylesheet" href="simba-comment.css">
+  <link rel="stylesheet" href="header.css">
+  <title>Contact</title>
+	<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js"></script>
+</head>
+<body>
+  <header>
+		<div><img class="top-icon" src="Media/2.svg" ></div>
+
+		<div class="header-button-box">
+			<a href="index.html"> <div> <span>Home</span> </div> </a>
+			<a href="gallery.html"> <div> <span>Gallery</span> </div> </a>
+			<a href="chicken.html"> <div> <span>Chicken</span> </div> </a>
+			<a> <div> <span>Contact</span> </div> </a>
+		</div>
+	</header>
+	<!--SIDEBAR-->
+	<sidebar class="socials-sidebar">
+		<a class="social-icon"><img class="social-img" src="Media/socials/iconmonstr-facebook-6.svg"></a>
+		<a class="social-icon"><img class="social-img" src="Media/socials/iconmonstr-instagram-11.svg"></a>
+		<a class="social-icon"><img class="social-img" src="Media/socials/iconmonstr-twitter-1.svg"></a>
+		<a class="social-icon"><img	class="social-img" src="Media/socials/logo-tiktok-svgrepo-com.svg"></a>
+	</sidebar>
+	<div class="main-input-container">
+		<div class="sub-input-container">
+			<form>
+				<div> <label for="uname">User Name</label> </div>
+				<div> <input type="text" id="name" name="uname"> </div>
+			</form>
+		</div>
+		<div class="sub-input-container">
+				<form>
+					<div> <label for="Comment">Comment</label> </div>
+					<div class="comment-input-box"> <textarea id="comment" name="Comment"></textarea> </div>
+			</form>
+	</div>
+	<div>
+		<input type = "button" id="button" onclick="post()" value = "Submit"><br/>
+	</div>
+
+	<div>
+		<p id="output"></p>
+	</div>
+	</div>
+
+	<script>
+		var posts = []; //array to store the posts
+
+		function createPost(name, comment) {
+			return {
+				name,
+				comment,
+				doReport: function () {
+      		return this.name + ' and ' + this.comment;
+    		}
+			};
+		}
+		//only aragorn and chatgpt know what this is
+		function doReport() {
+  		var output = "";
+  			for (var i = 0; i < posts.length; i++) {
+    			output += (i + 1) + ") " + posts[i].doReport() + "; ";
+  			}
+  		document.getElementById("output").innerHTML = output;
+		}
+		// when clicked it calls the other one to creat the post and it push it in the array
+		function post() {
+  		var post = createPost(
+    		document.getElementById("comment").value,
+    		document.getElementById("name").value,
+  		);
+
+			const database = firebase.database();
+  		database.ref("posts").push(post);
+
+  		posts.push(post);
+  			doReport();
+		}
+
+		function loadPostsFromFirebase() {
+  const database = firebase.database();
+  database.ref("posts").once("value")
+    .then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        const post = childSnapshot.val();
+        posts.push(post);
+      });
+      // Once data is loaded, update the display
+      doReport();
+    })
+    .catch(function(error) {
+      console.error("Error loading posts: ", error);
+    });
+}
+	window.onload = function() {
+		loadPostsFromFirebase();
+	};
+	</script>
+	<script>
+		// Import the functions you need from the SDKs you need
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+		import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js";
+		// TODO: Add SDKs for Firebase products that you want to use
+		// https://firebase.google.com/docs/web/setup#available-libraries
+	
+		// Your web app's Firebase configuration
+		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		const firebaseConfig = {
+			apiKey: "AIzaSyDw4a83LLxqdFHCga4ccJ3e-Rjgea8Tdzw",
+			authDomain: "simba-61530.firebaseapp.com",
+			projectId: "simba-61530",
+			storageBucket: "simba-61530.appspot.com",
+			messagingSenderId: "174602012276",
+			appId: "1:174602012276:web:e0a56c2045027cd2bd7321",
+			measurementId: "G-9GM4EP47G6"
+		};
+	
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const analytics = getAnalytics(app);
+	</script>
+</body>
+
+
+</html>
+
